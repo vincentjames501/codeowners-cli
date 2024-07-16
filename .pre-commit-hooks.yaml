@@ -1,0 +1,6 @@
+- id: codeowners-cli
+  name: codeowners-cli
+  description: Runs codeowners-cli to list or validate code owners.
+  entry: hooks/codeowners-cli-pre-commit
+  language: script
+  require_serial: true

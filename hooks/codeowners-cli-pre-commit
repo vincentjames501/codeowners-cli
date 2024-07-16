@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+
+if ! command -v clj-kondo &> /dev/null
+then
+    echo "codeowners-cli could not be found. Please follow the installation instructions here https://github.com/vincentjames501/codeowners-cli?tab=readme-ov-file#getting-started."
+    exit 2
+fi
+
+if !(codeowners-cli $@)
+then
+    echo
+    echo "Error: new CODEOWNErS errors found. Please fix them and retry the commit."
+    exit 1
+fi
