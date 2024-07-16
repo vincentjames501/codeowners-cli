@@ -24,7 +24,7 @@
 
     <groupId>org.vincentjames501.codeowners</groupId>
     <artifactId>codeowners-cli</artifactId>
-    <version>0.0.3</version>
+    <version>0.0.4-SNAPSHOT</version>
 
     <description>CodeOwners CLI utility</description>
     <inceptionYear>2024</inceptionYear>
