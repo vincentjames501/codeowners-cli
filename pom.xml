@@ -24,7 +24,7 @@
 
     <groupId>org.vincentjames501.codeowners</groupId>
     <artifactId>codeowners-cli</artifactId>
-    <version>0.0.1</version>
+    <version>0.0.1-SNAPSHOT</version>
 
     <description>CodeOwners CLI utility</description>
     <inceptionYear>2024</inceptionYear>
@@ -47,7 +47,7 @@
 
     <properties>
         <!-- Build -->
-        <mainClass>org.vincentjames501.codeowners.codeowners-cli</mainClass>
+        <mainClass>org.vincentjames501.codeowners.CodeOwnersCLI</mainClass>
         <executable-suffix/>
         <appName>codeowners-cli</appName>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
