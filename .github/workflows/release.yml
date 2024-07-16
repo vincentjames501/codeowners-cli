@@ -65,7 +65,7 @@ jobs:
           echo "PLAIN_VERSION=$PLAIN_VERSION" >> $GITHUB_OUTPUT
 
   build:
-    depends: [ version ]
+    needs: [ version ]
     runs-on: ubuntu-latest
     steps:
       - name: 'Check out repository'
