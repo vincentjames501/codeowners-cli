@@ -171,8 +171,8 @@ This is powered by GraalVM native image and distribution using JReleaser and Git
 
 ## Related projects
 
-> rrajesh1979/ref-java-jwt – Build process heavily inspired by https://github.com/rrajesh1979/ref-java-jwt
-> nielsbasjes/codeowners – Leverages parsers for the CLI tools https://github.com/nielsbasjes/codeowners
+* `rrajesh1979/ref-java-jwt` – Build process heavily inspired by https://github.com/rrajesh1979/ref-java-jwt
+* `nielsbasjes/codeowners` – Leverages parsers for the CLI https://github.com/nielsbasjes/codeowners
 
 ## License
 
