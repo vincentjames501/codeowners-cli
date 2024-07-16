@@ -27,7 +27,7 @@ class CodeOwnersCLITest {
     @Test
     @DisplayName("Test codeowners-cli Main - list")
     void listTest() {
-        String[] args = {"list", "-cf", "./src/test/resources/CODEOWNERS"};
+        String[] args = { "list", "-cf", "./src/test/resources/CODEOWNERS" };
         CommandLine codeOwnersCLI = new CommandLine(new CodeOwnersCLI());
         int exitCode = codeOwnersCLI
                 .setColorScheme(codeOwnersCLI.getColorScheme())
@@ -38,7 +38,7 @@ class CodeOwnersCLITest {
     @Test
     @DisplayName("Test codeowners-cli Main - verify")
     void verifyTest() {
-        String[] args = {"verify", "-cf", "./src/test/resources/CODEOWNERS"};
+        String[] args = { "verify", "-cf", "./src/test/resources/CODEOWNERS" };
         CommandLine codeOwnersCLI = new CommandLine(new CodeOwnersCLI());
         int exitCode = codeOwnersCLI
                 .setColorScheme(codeOwnersCLI.getColorScheme())
@@ -61,7 +61,7 @@ class CodeOwnersCLITest {
     @Test
     @DisplayName("Test codeowners-cli Main - Invalid Command")
     void mainInvalidTest() {
-        String[] args = {"invalid"};
+        String[] args = { "invalid" };
         System.out.println(String.join(" ", args));
         CommandLine codeOwnersCLI = new CommandLine(new CodeOwnersCLI());
         int exitCode = codeOwnersCLI

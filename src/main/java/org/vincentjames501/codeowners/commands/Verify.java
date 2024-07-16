@@ -15,23 +15,16 @@
  */
 package org.vincentjames501.codeowners.commands;
 
-import nl.basjes.codeowners.CodeOwners;
-import nl.basjes.gitignore.GitIgnore;
-import picocli.CommandLine;
-import picocli.CommandLine.Command;
-import picocli.CommandLine.Option;
-import picocli.CommandLine.Parameters;
-
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.Callable;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
+
+import nl.basjes.codeowners.CodeOwners;
+import picocli.CommandLine;
+import picocli.CommandLine.Command;
+import picocli.CommandLine.Option;
 
 /**
  * @author vincentjames501
@@ -40,7 +33,7 @@ import java.util.stream.Stream;
  */
 @Command(name = "verify", description = "Verifies the format of the CODEOWNERS file", subcommands = CommandLine.HelpCommand.class)
 public class Verify implements Callable<Integer> {
-    @Option(names = {"-cf", "--codeowners-file"}, description = "Specify the path to the CODEOWNERS file.")
+    @Option(names = { "-cf", "--codeowners-file" }, description = "Specify the path to the CODEOWNERS file.")
     Path codeownersFile = Paths.get("./CODEOWNERS");
 
     @Override
@@ -53,7 +46,8 @@ public class Verify implements Callable<Integer> {
             if (codeOwners.hasStructuralProblems()) {
                 throw new RuntimeException("CodeOwners has structural issues!");
             }
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
             throw new RuntimeException(e);
         }
         System.out.println("CODEOWNERS file is valid.");

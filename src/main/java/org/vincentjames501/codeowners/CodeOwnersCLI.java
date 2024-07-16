@@ -18,8 +18,8 @@ package org.vincentjames501.codeowners;
 import java.util.concurrent.Callable;
 
 import org.vincentjames501.codeowners.commands.ListCodeOwners;
-
 import org.vincentjames501.codeowners.commands.Verify;
+
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Help.Ansi.Style;
@@ -31,16 +31,11 @@ import picocli.CommandLine.HelpCommand;
  * @version 0.0.1
  * @since 2024-July-15
  */
-@Command(name = "codeowners-cli",
-        mixinStandardHelpOptions = true,
-        version = "codeowners-cli 0.0.1",
-        description = "Process CODEOWNER files",
-        subcommands = {
-                HelpCommand.class,
-                ListCodeOwners.class,
-                Verify.class
-        }
-)
+@Command(name = "codeowners-cli", mixinStandardHelpOptions = true, version = "codeowners-cli 0.0.1", description = "Process CODEOWNER files", subcommands = {
+        HelpCommand.class,
+        ListCodeOwners.class,
+        Verify.class
+})
 public class CodeOwnersCLI implements Callable<Integer> {
     /**
      * Main function to invoke the picocli framework.

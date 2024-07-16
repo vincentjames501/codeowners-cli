@@ -15,13 +15,6 @@
  */
 package org.vincentjames501.codeowners.commands;
 
-import nl.basjes.codeowners.CodeOwners;
-import nl.basjes.gitignore.GitIgnore;
-import picocli.CommandLine;
-import picocli.CommandLine.Parameters;
-import picocli.CommandLine.Command;
-import picocli.CommandLine.Option;
-
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -31,6 +24,13 @@ import java.util.concurrent.Callable;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import nl.basjes.codeowners.CodeOwners;
+import nl.basjes.gitignore.GitIgnore;
+import picocli.CommandLine;
+import picocli.CommandLine.Command;
+import picocli.CommandLine.Option;
+import picocli.CommandLine.Parameters;
+
 /**
  * @author vincentjames501
  * @version 0.0.1
@@ -38,25 +38,25 @@ import java.util.stream.Stream;
  */
 @Command(name = "list", description = "Lists all files with the corresponding approvers", subcommands = CommandLine.HelpCommand.class)
 public class ListCodeOwners implements Callable<Integer> {
-    @Option(names = {"-cf", "--codeowners-file"}, description = "Specify the path to the CODEOWNERS file.")
+    @Option(names = { "-cf", "--codeowners-file" }, description = "Specify the path to the CODEOWNERS file.")
     Path codeownersFile = Paths.get("./CODEOWNERS");
 
-    @Option(names = {"-gi", "--gitignore-file"}, description = "Specify the path to the .gitignore file.")
+    @Option(names = { "-gi", "--gitignore-file" }, description = "Specify the path to the .gitignore file.")
     Path gitignoreFile;
 
-    @Option(names = {"-ngi", "--no-gitignore"}, description = "Whether to ignore the .gitignore file.")
+    @Option(names = { "-ngi", "--no-gitignore" }, description = "Whether to ignore the .gitignore file.")
     boolean noGitIgnore = false;
 
-    @Option(names = {"-idl", "--ignore-dot-files"}, description = "Whether to ignore the dot files.")
+    @Option(names = { "-idl", "--ignore-dot-files" }, description = "Whether to ignore the dot files.")
     boolean ignoreDotFiles = true;
 
-    @Option(names = {"-u", "--unowned-files"}, description = "Whether to only show unowned files (can be combined with -o).")
+    @Option(names = { "-u", "--unowned-files" }, description = "Whether to only show unowned files (can be combined with -o).")
     boolean unownedFilesOnly = false;
 
-    @Option(names = {"-f", "--fail-on-output"}, description = "Whether to exit non-zero if there are any matches.")
+    @Option(names = { "-f", "--fail-on-output" }, description = "Whether to exit non-zero if there are any matches.")
     boolean failOnOutput = false;
 
-    @Option(names = {"-o", "--owners"}, description = "Filters the results by owner")
+    @Option(names = { "-o", "--owners" }, description = "Filters the results by owner")
     Set<String> owners;
 
     @Parameters(description = "Specifies the files to scan")
@@ -68,12 +68,15 @@ public class ListCodeOwners implements Callable<Integer> {
         if (!noGitIgnore) {
             if (gitignoreFile == null && Files.exists(DEFAULT_GIT_IGNORE_PATH)) {
                 return new GitIgnore(DEFAULT_GIT_IGNORE_PATH.toFile());
-            } else if (gitignoreFile != null) {
+            }
+            else if (gitignoreFile != null) {
                 return new GitIgnore(gitignoreFile.toFile());
-            } else {
+            }
+            else {
                 return null;
             }
-        } else {
+        }
+        else {
             return null;
         }
     }
@@ -107,13 +110,12 @@ public class ListCodeOwners implements Callable<Integer> {
                         try {
                             return Files.find(path,
                                     Integer.MAX_VALUE,
-                                    (filePath, basicFileAttributes) ->
-                                            basicFileAttributes.isRegularFile() &&
-                                                    !filePath.toFile().isHidden() &&
-                                                    (!ignoreDotFiles || !filePath.toString().contains("/.")) &&
-                                                    (gitIgnore == null || !Boolean.TRUE.equals(gitIgnore.isIgnoredFile(filePath.toString())))
-                            );
-                        } catch (IOException e) {
+                                    (filePath, basicFileAttributes) -> basicFileAttributes.isRegularFile() &&
+                                            !filePath.toFile().isHidden() &&
+                                            (!ignoreDotFiles || !filePath.toString().contains("/.")) &&
+                                            (gitIgnore == null || !Boolean.TRUE.equals(gitIgnore.isIgnoredFile(filePath.toString()))));
+                        }
+                        catch (IOException e) {
                             throw new RuntimeException(e);
                         }
                     })
@@ -127,9 +129,11 @@ public class ListCodeOwners implements Callable<Integer> {
                         final List<String> approvers = entry.getValue();
                         if (owners != null) {
                             return approvers.stream().anyMatch(approver -> owners.contains(approver));
-                        } else if (unownedFilesOnly) {
+                        }
+                        else if (unownedFilesOnly) {
                             return approvers.isEmpty();
-                        } else {
+                        }
+                        else {
                             return true;
                         }
                     })
@@ -138,7 +142,8 @@ public class ListCodeOwners implements Callable<Integer> {
             if (matchEntries.isEmpty()) {
                 System.out.println("No matching owners");
                 return 0;
-            } else {
+            }
+            else {
                 int maxFileLength = matchEntries
                         .stream()
                         .mapToInt(entry -> entry.getKey().toString().length())
@@ -158,7 +163,8 @@ public class ListCodeOwners implements Callable<Integer> {
 
                 return failOnOutput ? 1 : 0;
             }
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
