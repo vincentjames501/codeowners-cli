@@ -142,6 +142,30 @@ $ codeowners-cli verify
 CODEOWNERS file is valid.
 ```
 
+## Pre-commit Usage
+
+To use with Pre-commit, simply add the following to your `.pre-commit-config.yaml`:
+
+### To prevent committing unowned files (also validate CODEOWNERS format)
+
+```yaml
+- repo: https://github.com/vincentjames501/codeowners-cli
+  rev: v0.0.3
+  hooks:
+    - id: codeowners-cli
+      args: [ "list", "--unowned-files", "--fail-on-output" ]
+```
+
+### To prevent committing just invalid CODEOWNERS
+
+```yaml
+- repo: https://github.com/vincentjames501/codeowners-cli
+  rev: v0.0.3
+  hooks:
+    - id: codeowners-cli
+      args: [ "verify" ]
+```
+
 ## Building
 
 This is powered by GraalVM native image and distribution using JReleaser and GitHub Actions and Workflow.
