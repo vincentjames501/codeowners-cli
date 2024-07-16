@@ -180,6 +180,4 @@ This is powered by GraalVM native image and distribution using JReleaser and Git
 
 ## Code Quality
 
-[![codecov](https://codecov.io/gh/vincentjames501/codeowners-cli/branch/main/graph/badge.svg?token=nuivwdrnL1)](https://codecov.io/gh/vincentjames501/codeowners-cli)
-
 [![Maintainability](https://api.codeclimate.com/v1/badges/6bfbafbfd54e673b5a0b/maintainability)](https://codeclimate.com/github/vincentjames501/codeowners-cli/maintainability)
