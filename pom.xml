@@ -644,7 +644,7 @@
                 <configuration>
                     <type>range</type>
                     <range>1</range>
-                    <!--<displayFileDetailUrl>${project.scm.url}/tree/master/%FILE%</displayFileDetailUrl>-->
+                    <!--<displayFileDetailUrl>${project.scm.url}/tree/main/%FILE%</displayFileDetailUrl>-->
                     <headingDateFormat>MM-dd-yyyy</headingDateFormat>
                     <outputEncoding>${project.reporting.outputEncoding}</outputEncoding>
                 </configuration>
