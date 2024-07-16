@@ -41,17 +41,31 @@ jobs:
 #        run: |
 #          ./mvnw -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=vincentjames501_codeowners-cli
 
-      - name: 'Upload coverage to Codecov'
-        uses: codecov/codecov-action@v2
-        with:
-          token: ${{ secrets.CODECOV_TOKEN }}
-          verbose: true
+#      - name: 'Upload coverage to Codecov'
+#        uses: codecov/codecov-action@v2
+#        with:
+#          token: ${{ secrets.CODECOV_TOKEN }}
+#          verbose: true
+#
+#      - name: 'Upload test coverage to Code climate'
+#        uses: paambaati/codeclimate-action@v3.0.0
+#        env:
+#          CC_TEST_REPORTER_ID: ${{ secrets.CODECLIMATE_TOKEN }}
+#          JACOCO_SOURCE_PATH: "${{github.workspace}}/src/main/java"
+#        with:
+#          coverageCommand: mvn verify
+#          coverageLocations: ${{github.workspace}}/target/site/jacoco-ut/jacoco.xml:jacoco
 
-      - name: 'Upload test coverage to Code climate'
-        uses: paambaati/codeclimate-action@v3.0.0
-        env:
-          CC_TEST_REPORTER_ID: ${{ secrets.CODECLIMATE_TOKEN }}
-          JACOCO_SOURCE_PATH: "${{github.workspace}}/src/main/java"
+      - name: Run Coverage
+        run: |
+          ./mvnw verify
+
+      - name: Add coverage to PR
+        id: jacoco
+        uses: madrapps/jacoco-report@v1.6.1
         with:
-          coverageCommand: mvn verify
-          coverageLocations: ${{github.workspace}}/target/site/jacoco-ut/jacoco.xml:jacoco
+          paths: ${{github.workspace}}/target/site/jacoco-ut/jacoco.xml
+          token: ${{ secrets.GITHUB_TOKEN }}
+          min-coverage-overall: 40
+          min-coverage-changed-files: 60
+        
