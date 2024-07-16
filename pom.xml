@@ -76,11 +76,6 @@
 
         <!-- Dependencies -->
         <plugin.site.version>4.0.0-M15</plugin.site.version>
-
-        <!-- Sonar cloud properties -->
-        <sonar.organization>vincentjames501</sonar.organization>
-        <sonar.host.url>https://sonarcloud.io</sonar.host.url>
-
     </properties>
 
     <!-- Override dependencies -->
@@ -198,11 +193,6 @@
         </extensions>
         <pluginManagement>
             <plugins>
-                <plugin>
-                    <groupId>org.sonarsource.scanner.maven</groupId>
-                    <artifactId>sonar-maven-plugin</artifactId>
-                    <version>4.0.0.4121</version>
-                </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-compiler-plugin</artifactId>

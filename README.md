@@ -16,7 +16,6 @@ in a local repository or directory as well as identifying unowned codeowners.
 
 [![Release](https://github.com/vincentjames501/codeowners-cli/actions/workflows/release.yml/badge.svg)](https://github.com/vincentjames501/codeowners-cli/actions/workflows/release.yml)
 [![Code quality checks](https://github.com/vincentjames501/codeowners-cli/actions/workflows/code-quality-checks.yml/badge.svg?branch=main)](https://github.com/vincentjames501/codeowners-cli/actions/workflows/code-quality-checks.yml) 
-[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=vincentjames501_codeowners-cli&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=vincentjames501_codeowners-cli)
 ![GitHub release (latest by date)](https://img.shields.io/github/v/release/vincentjames501/codeowners-cli)
 ![GitHub last commit](https://img.shields.io/github/last-commit/vincentjames501/codeowners-cli)
 ![GitHub commit activity](https://img.shields.io/github/commit-activity/y/vincentjames501/codeowners-cli)
