@@ -98,9 +98,9 @@ public class ListCodeOwners implements Callable<Integer> {
         });
 
         try {
-            GitIgnore gitIgnore = buildGitIgnore();
+            final GitIgnore gitIgnore = buildGitIgnore();
 
-            CodeOwners codeOwners = new CodeOwners(codeownersFile.toFile());
+            final CodeOwners codeOwners = new CodeOwners(codeownersFile.toFile());
             if (codeOwners.hasStructuralProblems()) {
                 throw new RuntimeException("CodeOwners has structural issues!");
             }
@@ -123,7 +123,7 @@ public class ListCodeOwners implements Callable<Integer> {
                     .stream()
                     .sorted();
 
-            final List<Map.Entry<Path, List<String>>> matchEntries = allPotentialFiles
+            final List<Map.Entry<Path, String>> matchEntries = allPotentialFiles
                     .map(filePath -> Map.entry(filePath, codeOwners.getAllApprovers(filePath.toString())))
                     .filter(entry -> {
                         final List<String> approvers = entry.getValue();
@@ -137,6 +137,9 @@ public class ListCodeOwners implements Callable<Integer> {
                             return true;
                         }
                     })
+                    .map(entry -> Map.entry(
+                            entry.getKey(),
+                            entry.getValue().isEmpty() ? "(Unowned)" : String.join(", ", entry.getValue())))
                     .toList();
 
             if (matchEntries.isEmpty()) {
@@ -144,22 +147,20 @@ public class ListCodeOwners implements Callable<Integer> {
                 return 0;
             }
             else {
-                int maxFileLength = matchEntries
+                final int maxFileLength = Math.max(matchEntries
                         .stream()
                         .mapToInt(entry -> entry.getKey().toString().length())
                         .max()
-                        .getAsInt();
-                int maxCodeOwnersLength = matchEntries
+                        .getAsInt(), 12);
+                final int maxCodeOwnersLength = Math.max(matchEntries
                         .stream()
-                        .mapToInt(entry -> String.join(", ", entry.getValue()).length())
+                        .mapToInt(entry -> entry.getValue().length())
                         .max()
-                        .getAsInt();
+                        .getAsInt(), 12);
 
-                String format = "%" + maxFileLength + "s | %" + maxCodeOwnersLength + "s\n";
+                final String format = "%" + maxFileLength + "s | %" + maxCodeOwnersLength + "s\n";
                 System.out.printf(format, "File", "Approvers");
-                matchEntries.forEach(entry -> {
-                    System.out.printf(format, entry.getKey().toString(), String.join(", ", entry.getValue()));
-                });
+                matchEntries.forEach(entry -> System.out.printf(format, entry.getKey().toString(), entry.getValue()));
 
                 return failOnOutput ? 1 : 0;
             }
