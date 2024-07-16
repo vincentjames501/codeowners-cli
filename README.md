@@ -10,7 +10,9 @@
 <div align="center">
 
 # CodeOwners CLI
-Command line tool for identifying the owners for files in a local repository or directory as well as identifying unowned codeowners.
+
+Command line tool for [codeowners](https://github.com/nielsbasjes/codeowners) that helps idenfity the owners for files 
+in a local repository or directory as well as identifying unowned codeowners.
 
 [![Release](https://github.com/vincentjames501/codeowners-cli/actions/workflows/release.yml/badge.svg)](https://github.com/vincentjames501/codeowners-cli/actions/workflows/release.yml)
 [![Code quality checks](https://github.com/vincentjames501/codeowners-cli/actions/workflows/code-quality-checks.yml/badge.svg?branch=main)](https://github.com/vincentjames501/codeowners-cli/actions/workflows/code-quality-checks.yml) 
@@ -63,8 +65,81 @@ brew upgrade codeowners-cli
 Invoking the command displays the usage information as shown below.
 
 ```shell
-codeowners-cli help
-TODO
+$ codeowners-cli help
+
+Usage: codeowners-cli [-hV] [COMMAND]
+Process CODEOWNER files
+  -h, --help      Show this help message and exit.
+  -V, --version   Print version information and exit.
+Commands:
+  help    Display help information about the specified command.
+  list    Lists all files with the corresponding approvers
+  verify  Verifies the format of the CODEOWNERS file
+```
+
+```shell
+$ codeowners-cli list help
+
+Usage: codeowners-cli list [-fu] [-idl] [-ngi] [-cf=<codeownersFile>]
+                           [-gi=<gitignoreFile>] [-o=<owners>]... [<files>...]
+                           [COMMAND]
+Lists all files with the corresponding approvers
+      [<files>...]           Specifies the files to scan
+      -cf, --codeowners-file=<codeownersFile>
+                             Specify the path to the CODEOWNERS file.
+  -f, --fail-on-output       Whether to exit non-zero if there are any matches.
+      -gi, --gitignore-file=<gitignoreFile>
+                             Specify the path to the .gitignore file.
+      -idl, --ignore-dot-files
+                             Whether to ignore the dot files.
+      -ngi, --no-gitignore   Whether to ignore the .gitignore file.
+  -o, --owners=<owners>      Filters the results by owner
+  -u, --unowned-files        Whether to only show unowned files (can be
+                               combined with -o).
+Commands:
+  help  Display help information about the specified command.
+```
+
+```shell
+$ codeowners-cli list
+
+                                                                       File |               Approvers
+                                                       ./CODE_OF_CONDUCT.md |           @default-team
+                                                          ./CONTRIBUTING.md |           @default-team
+                                                                  ./LICENSE |           @default-team
+                                                                ./README.md |           @default-team
+                                               ./dependency-reduced-pom.xml |           @default-team
+                                         ./etc/eclipse-formatter-config.xml |           @default-team
+                                                          ./etc/license.txt |           @default-team
+                                                            ./jreleaser.yml |           @default-team
+                                                                     ./mvnw |           @default-team
+                                                                 ./mvnw.cmd |           @default-team
+                                                                  ./pom.xml |           @default-team
+                                           ./src/main/assembly/assembly.xml |    @devs, @default-team
+          ./src/main/java/org/vincentjames501/codeowners/CodeOwnersCLI.java |    @devs, @default-team
+./src/main/java/org/vincentjames501/codeowners/commands/ListCodeOwners.java |    @devs, @default-team
+        ./src/main/java/org/vincentjames501/codeowners/commands/Verify.java |    @devs, @default-team
+         ./src/main/resources/META-INF/native-image/native-image.properties |    @devs, @default-team
+             ./src/main/resources/META-INF/native-image/reflect-config.json |    @devs, @default-team
+      ./src/test/java/org/vincentjames501/codeowners/CodeOwnersCLITest.java | @testers, @default-team
+                                            ./src/test/resources/CODEOWNERS | @testers, @default-team
+```
+
+```shell
+codeowners-cli verify help
+
+Usage: codeowners-cli verify [-cf=<codeownersFile>] [COMMAND]
+Verifies the format of the CODEOWNERS file
+      -cf, --codeowners-file=<codeownersFile>
+         Specify the path to the CODEOWNERS file.
+Commands:
+  help  Display help information about the specified command.
+```
+
+```shell
+$ codeowners-cli verify
+
+CODEOWNERS file is valid.
 ```
 
 ## Building
