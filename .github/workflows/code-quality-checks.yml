@@ -1,0 +1,57 @@
+name: Code quality checks
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  Code-Quality-Checks:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "🔎 Checking code quality of repository ${{ github.repository }}."
+
+      - name: 'Checkout'
+        uses: actions/checkout@v2
+
+      - name: 'Setup Java 17'
+        uses: actions/setup-java@v1
+        with:
+          java-version: 17
+
+      - name: Cache SonarCloud packages
+        uses: actions/cache@v1
+        with:
+          path: ~/.sonar/cache
+          key: ${{ runner.os }}-sonar
+          restore-keys: ${{ runner.os }}-sonar
+
+      - name: Cache Maven packages
+        uses: actions/cache@v1
+        with:
+          path: ~/.m2
+          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+          restore-keys: ${{ runner.os }}-m2
+
+      - name: 'Build and analyze'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: |
+          ./mvnw -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=vincentjames501_codeowners-cli
+
+      - name: 'Upload coverage to Codecov'
+        uses: codecov/codecov-action@v2
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          verbose: true
+
+      - name: 'Upload test coverage to Code climate'
+        uses: paambaati/codeclimate-action@v3.0.0
+        env:
+          CC_TEST_REPORTER_ID: ${{ secrets.CODECLIMATE_TOKEN }}
+          JACOCO_SOURCE_PATH: "${{github.workspace}}/src/main/java"
+        with:
+          coverageCommand: mvn verify
+          coverageLocations: ${{github.workspace}}/target/site/jacoco-ut/jacoco.xml:jacoco
