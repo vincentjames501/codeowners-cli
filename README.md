@@ -11,8 +11,8 @@
 
 # CodeOwners CLI
 
-Command line tool for [codeowners](https://github.com/nielsbasjes/codeowners) that helps idenfity the owners for files 
-in a local repository or directory as well as identifying unowned codeowners.
+Command line tool for [codeowners](https://github.com/nielsbasjes/codeowners) that helps identify the owners for files 
+in a local repository or directory as well as identifying unowned code owners.
 
 [![Release](https://github.com/vincentjames501/codeowners-cli/actions/workflows/release.yml/badge.svg)](https://github.com/vincentjames501/codeowners-cli/actions/workflows/release.yml)
 [![Code quality checks](https://github.com/vincentjames501/codeowners-cli/actions/workflows/code-quality-checks.yml/badge.svg?branch=main)](https://github.com/vincentjames501/codeowners-cli/actions/workflows/code-quality-checks.yml) 
