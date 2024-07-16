@@ -1,17 +1,9 @@
 #
-#  Copyright 2024 The original authors
+# SPDX-License-Identifier: Apache-2.0
 #
-#  Licensed under the Apache License, Version 2.0 (the "License");
-#  you may not use this file except in compliance with the License.
-#  You may obtain a copy of the License at
+# Copyright The original authors
 #
-#      http://www.apache.org/licenses/LICENSE-2.0
-#
-#  Unless required by applicable law or agreed to in writing, software
-#  distributed under the License is distributed on an "AS IS" BASIS,
-#  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-#  See the License for the specific language governing permissions and
-#  limitations under the License.
+# Licensed under the Apache Software License version 2.0, available at http://www.apache.org/licenses/LICENSE-2.0
 #
 
 name: Release
@@ -26,29 +18,33 @@ on:
         description: "Next version"
         required: false
 
+env:
+  JAVA_VERSION: '21'
+  JAVA_DISTRO: 'temurin'
+  GRAAL_VERSION: '22.3.0'
+
 jobs:
   version:
     runs-on: ubuntu-latest
+    outputs:
+      HEAD: ${{ steps.version.outputs.HEAD }}
+      RELEASE_VERSION: ${{ steps.version.outputs.RELEASE_VERSION }}
+      PLAIN_VERSION: ${{ steps.version.outputs.PLAIN_VERSION }}
+      NEXT_VERSION: ${{ steps.version.outputs.NEXT_VERSION }}
     steps:
-      - uses: actions/checkout@v2
+      - name: 'Check out repository'
+        uses: actions/checkout@v4
 
       - name: 'Set up Java'
-        uses: actions/setup-java@v2
+        uses: actions/setup-java@v4
         with:
-          java-version: 21
-          distribution: 'zulu'
-
-      - name: 'Cache Maven packages'
-        uses: actions/cache@v2.1.7
-        with:
-          path: ~/.m2
-          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
-          restore-keys: ${{ runner.os }}-m2
+          java-version: ${{ env.JAVA_VERSION }}
+          distribution: ${{ env.JAVA_DISTRO }}
+          cache: maven
 
       - name: 'Set release version'
         id: version
         run: |
-          echo ${{ github.event.inputs.version }}
           RELEASE_VERSION=${{ github.event.inputs.version }}
           NEXT_VERSION=${{ github.event.inputs.next }}
           PLAIN_VERSION=`echo ${RELEASE_VERSION} | awk 'match($0, /^(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)/) { print substr($0, RSTART, RLENGTH); }'`
@@ -57,177 +53,138 @@ jobs:
           then
             NEXT_VERSION=$COMPUTED_NEXT_VERSION
           fi
-          ./mvnw -B versions:set versions:commit -DnewVersion=$RELEASE_VERSION
+          ./mvnw -ntp -B versions:set versions:commit -DnewVersion=$RELEASE_VERSION
           git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git config --global user.name "GitHub Action"
           git commit -a -m "🏁 Releasing version $RELEASE_VERSION"
-          git push
-          echo "removed: origin HEAD:main"
-          git rev-parse HEAD > HEAD
-          echo $RELEASE_VERSION > RELEASE_VERSION
-          echo $PLAIN_VERSION > PLAIN_VERSION
-          echo $NEXT_VERSION > NEXT_VERSION
+          git push origin HEAD:main
+          HEAD=$(git rev-parse HEAD)
+          echo "HEAD=$HEAD" >> $GITHUB_OUTPUT
+          echo "RELEASE_VERSION=$RELEASE_VERSION" >> $GITHUB_OUTPUT
+          echo "NEXT_VERSION=$NEXT_VERSION" >> $GITHUB_OUTPUT
+          echo "PLAIN_VERSION=$PLAIN_VERSION" >> $GITHUB_OUTPUT
 
-      - name: 'Upload version files'
-        uses: actions/upload-artifact@v2
-        with:
-          name: artifacts
-          path: |
-            HEAD
-            *_VERSION
-
-  # Build native executable per runner
   build:
-    needs: [ version ]
-    name: 'Build with Graal on ${{ matrix.os }}'
-    strategy:
-      fail-fast: true
-      matrix:
-        os: [ ubuntu-latest, macOS-latest, windows-latest ]
-        gu-binary: [ gu, gu.cmd ]
-        exclude:
-          # Exclude GraalVM native image builds
-          - os: ubuntu-latest
-            gu-binary: gu.cmd
-          - os: macos-latest
-            gu-binary: gu.cmd
-          - os: windows-latest
-            gu-binary: gu
-          # Temporarily excluding builds for testing
-          # TODO: Remove this exclusion once we have native image builds for all platforms
-#          - os: ubuntu-latest
-#            gu-binary: gu
-#          - os: macos-latest
-#            gu-binary: gu
-    runs-on: ${{ matrix.os }}
-
+    depends: [ version ]
+    runs-on: ubuntu-latest
     steps:
-      - name: 'Download all build artifacts'
-        uses: actions/download-artifact@v2
-
-      - name: 'Read HEAD ref'
-        id: head
-        uses: juliangruber/read-file-action@v1
-        with:
-          path: artifacts/HEAD
-
       - name: 'Check out repository'
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
         with:
-          ref: ${{ steps.head.outputs.content }}
+          ref: ${{ needs.version.outputs.HEAD }}
 
       - name: 'Add Developer Command Prompt for Microsoft Visual C++ '
         if: ${{ runner.os == 'Windows' }}
         uses: ilammy/msvc-dev-cmd@v1
 
       - name: 'Set up Graal'
-        uses: DeLaGuardo/setup-graalvm@5.0
+        uses: graalvm/setup-graalvm@v1
         with:
-          graalvm: '21.3.0'
-          java: 'java21'
+          java-version: ${{ env.JAVA_VERSION }}
+          distribution: 'graalvm-community'
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          cache: maven
 
-      - name: 'Install native-image component'
-        run: |
-          ${{ matrix.gu-binary }} install native-image
+      - name: 'Build'
+        if: ${{ runner.os == 'Linux' }}
+        run: ./mvnw -ntp -B --file pom.xml test
 
-      - name: 'Cache Maven packages'
-        uses: actions/cache@v2.1.7
+  # Build native executable per runner
+  package:
+    needs: [ version, build ]
+    name: 'Build with Graal on ${{ matrix.os }}'
+    strategy:
+      fail-fast: true
+      matrix:
+        os: [ ubuntu-latest, macOS-latest, macos-14, windows-latest ]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: 'Check out repository'
+        uses: actions/checkout@v4
         with:
-          path: ~/.m2
-          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
-          restore-keys: ${{ runner.os }}-m2
+          ref: ${{ needs.version.outputs.HEAD }}
 
-      - name: 'Build Native Image'
-        run: ./mvnw -B --file pom.xml -Pnative package
+      - name: 'Add Developer Command Prompt for Microsoft Visual C++ '
+        if: ${{ runner.os == 'Windows' }}
+        uses: ilammy/msvc-dev-cmd@v1
+
+      - name: 'Set up Graal'
+        uses: graalvm/setup-graalvm@v1
+        with:
+          java-version: ${{ env.JAVA_VERSION }}
+          distribution: 'graalvm-community'
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          cache: maven
+
+      - name: 'Build Native Image (Linux)'
+        if: ${{ runner.os == 'Linux' }}
+        run: ./mvnw -ntp -B --file pom.xml -Pnative package -DskipTests
+
+      - name: 'Build Native Image (macOS, Windows)'
+        if: ${{ runner.os != 'Linux' }}
+        run: ./mvnw -ntp -B --file pom.xml -Pnative package -DskipTests
 
       - name: 'Create distribution'
-        run: ./mvnw -B --file pom.xml -Pdist package -DskipTests
+        run: ./mvnw -ntp -B --file pom.xml -Pdist package -DskipTests
 
       - name: 'Upload build artifact'
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
-          name: artifacts
+          name: artifacts-${{ runner.os }}-${{ runner.arch }}
           path: |
             target/*.zip
             target/*.tar.gz
 
   # Collect all executables and release
   release:
-    needs: [ build ]
+    needs: [ version, package ]
     runs-on: ubuntu-latest
-
     steps:
-      # must read HEAD before checkout
-      - name: 'Download all build artifacts'
-        uses: actions/download-artifact@v2
-
-      - name: 'Read HEAD ref'
-        id: head
-        uses: juliangruber/read-file-action@v1
-        with:
-          path: artifacts/HEAD
-
-      - name: 'Read versions'
-        id: version
-        run: |
-          RELEASE_VERSION=`cat artifacts/RELEASE_VERSION`
-          PLAIN_VERSION=`cat artifacts/PLAIN_VERSION`
-          NEXT_VERSION=`cat artifacts/NEXT_VERSION`
-          echo "RELEASE_VERSION = $RELEASE_VERSION"
-          echo "PLAIN_VERSION   = $PLAIN_VERSION"
-          echo "NEXT_VERSION    = $NEXT_VERSION"
-          echo "::set-output name=RELEASE_VERSION::$RELEASE_VERSION"
-          echo "::set-output name=PLAIN_VERSION::$PLAIN_VERSION"
-          echo "::set-output name=NEXT_VERSION::$NEXT_VERSION"
-
       - name: 'Check out repository'
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
         with:
-          ref: ${{ steps.head.outputs.content }}
+          ref: ${{ needs.version.outputs.HEAD }}
           fetch-depth: 0
 
       # checkout will clobber downloaded artifacts
       # we have to download them again
       - name: 'Download all build artifacts'
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+          pattern: artifacts-*
+          merge-multiple: true
 
       - name: 'Set up Java'
-        uses: actions/setup-java@v2
+        uses: actions/setup-java@v4
         with:
-          java-version: 21
-          distribution: 'zulu'
-
-      - name: 'Cache Maven packages'
-        uses: actions/cache@v2.1.7
-        with:
-          path: ~/.m2
-          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
-          restore-keys: ${{ runner.os }}-m2
+          java-version: ${{ env.JAVA_VERSION }}
+          distribution: ${{ env.JAVA_DISTRO }}
+          cache: maven
 
       - name: 'Release with JReleaser'
         env:
           JRELEASER_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          JRELEASER_BRANCH: main
-          JRELEASER_HOMEBREW_GITHUB_TOKEN: ${{ secrets.JWT_RELEASE_TOKEN }}
-          JRELEASER_HOMEBREW_GITHUB_BRANCH: main
-        run: ./mvnw -e -B --file pom.xml -Prelease -DartifactsDir=artifacts jreleaser:full-release
+#          JRELEASER_SDKMAN_CONSUMER_KEY: ${{ secrets.JRELEASER_SDKMAN_CONSUMER_KEY }}
+#          JRELEASER_SDKMAN_CONSUMER_TOKEN: ${{ secrets.JRELEASER_SDKMAN_CONSUMER_TOKEN }}
+          JRELEASER_HOMEBREW_GITHUB_TOKEN: ${{ secrets.JRELEASER_HOMEBREW_GITHUB_TOKEN }}
+        run: ./mvnw -ntp -B --file pom.xml -Prelease -DartifactsDir=artifacts jreleaser:full-release
 
-      - name: JReleaser output
+      - name: 'JReleaser output'
         if: always()
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: jreleaser-logs
           path: |
             target/jreleaser/trace.log
             target/jreleaser/output.properties
 
-#      - name: 'Set next version'
-#        env:
-#          NEXT_VERSION: ${{ steps.version.outputs.NEXT_VERSION }}
-#        run: |
-#          ./mvnw -B versions:set versions:commit -DnewVersion=$NEXT_VERSION
-#          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
-#          git config --global user.name "GitHub Action"
-#          git commit -a -m "⬆️  Next version $NEXT_VERSION"
-#          git push origin HEAD:main
-#          echo "removed: origin HEAD:main"
+      - name: 'Set next version'
+        env:
+          NEXT_VERSION: ${{ needs.version.outputs.NEXT_VERSION }}
+        run: |
+          ./mvnw -ntp -B versions:set versions:commit -DnewVersion=$NEXT_VERSION
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config --global user.name "GitHub Action"
+          git commit -a -m "⬆️  Next version $NEXT_VERSION"
+          git push origin HEAD:main
