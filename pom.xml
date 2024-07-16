@@ -24,7 +24,7 @@
 
     <groupId>org.vincentjames501.codeowners</groupId>
     <artifactId>codeowners-cli</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>0.0.2-SNAPSHOT</version>
 
     <description>CodeOwners CLI utility</description>
     <inceptionYear>2024</inceptionYear>
@@ -61,6 +61,7 @@
 
         <!-- Dependencies -->
         <codeowners-enforcer-rules.version>1.6.0</codeowners-enforcer-rules.version>
+        <slf4j.version>2.0.13</slf4j.version>
 
         <!-- Tooling -->
         <junit.version>5.11.0-M2</junit.version>
@@ -85,6 +86,18 @@
     <!-- Override dependencies -->
     <dependencyManagement>
         <dependencies>
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-api</artifactId>
+                <version>${slf4j.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-simple</artifactId>
+                <version>${slf4j.version}</version>
+            </dependency>
+
             <dependency>
                 <groupId>nl.basjes.maven.enforcer.codeowners</groupId>
                 <artifactId>codeowners-enforcer-rules</artifactId>
@@ -128,6 +141,16 @@
     </dependencyManagement>
 
     <dependencies>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-simple</artifactId>
+        </dependency>
+
         <dependency>
             <groupId>nl.basjes.maven.enforcer.codeowners</groupId>
             <artifactId>codeowners-enforcer-rules</artifactId>
