@@ -96,7 +96,7 @@ jobs:
     strategy:
       fail-fast: true
       matrix:
-        os: [ ubuntu-latest, macOS-latest, macos-14, windows-latest ]
+        os: [ macos-latest, windows-latest, ubuntu-latest ]
     runs-on: ${{ matrix.os }}
     steps:
       - name: 'Check out repository'
@@ -116,12 +116,7 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           cache: maven
 
-      - name: 'Build Native Image (Linux)'
-        if: ${{ runner.os == 'Linux' }}
-        run: ./mvnw -ntp -B --file pom.xml -Pnative package -DskipTests
-
-      - name: 'Build Native Image (macOS, Windows)'
-        if: ${{ runner.os != 'Linux' }}
+      - name: 'Build Native Image (Linux, macOS, Windows)'
         run: ./mvnw -ntp -B --file pom.xml -Pnative package -DskipTests
 
       - name: 'Create distribution'
