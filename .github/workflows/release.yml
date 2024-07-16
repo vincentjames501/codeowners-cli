@@ -35,7 +35,7 @@ jobs:
       - name: 'Set up Java'
         uses: actions/setup-java@v2
         with:
-          java-version: 17
+          java-version: 21
           distribution: 'zulu'
 
       - name: 'Cache Maven packages'
@@ -124,7 +124,7 @@ jobs:
         uses: DeLaGuardo/setup-graalvm@5.0
         with:
           graalvm: '21.3.0'
-          java: 'java17'
+          java: 'java21'
 
       - name: 'Install native-image component'
         run: |
@@ -194,7 +194,7 @@ jobs:
       - name: 'Set up Java'
         uses: actions/setup-java@v2
         with:
-          java-version: 17
+          java-version: 21
           distribution: 'zulu'
 
       - name: 'Cache Maven packages'
