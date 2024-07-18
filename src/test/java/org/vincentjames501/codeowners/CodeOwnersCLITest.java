@@ -27,7 +27,18 @@ class CodeOwnersCLITest {
     @Test
     @DisplayName("Test codeowners-cli Main - list")
     void listTest() {
-        String[] args = { "list", "-cf", "./src/test/resources/CODEOWNERS" };
+        String[] args = { "list", "-c", "./src/test/resources/CODEOWNERS", "src/main", "src/test" };
+        CommandLine codeOwnersCLI = new CommandLine(new CodeOwnersCLI());
+        int exitCode = codeOwnersCLI
+                .setColorScheme(codeOwnersCLI.getColorScheme())
+                .execute(args);
+        assertEquals(0, exitCode);
+    }
+
+    @Test
+    @DisplayName("Test codeowners-cli Main - list help")
+    void listHelpTest() {
+        String[] args = { "list", "help" };
         CommandLine codeOwnersCLI = new CommandLine(new CodeOwnersCLI());
         int exitCode = codeOwnersCLI
                 .setColorScheme(codeOwnersCLI.getColorScheme())
@@ -38,7 +49,18 @@ class CodeOwnersCLITest {
     @Test
     @DisplayName("Test codeowners-cli Main - verify")
     void verifyTest() {
-        String[] args = { "verify", "-cf", "./src/test/resources/CODEOWNERS" };
+        String[] args = { "verify", "-c", "./src/test/resources/CODEOWNERS" };
+        CommandLine codeOwnersCLI = new CommandLine(new CodeOwnersCLI());
+        int exitCode = codeOwnersCLI
+                .setColorScheme(codeOwnersCLI.getColorScheme())
+                .execute(args);
+        assertEquals(0, exitCode);
+    }
+
+    @Test
+    @DisplayName("Test codeowners-cli Main - verify help")
+    void verifyHelpTest() {
+        String[] args = { "verify", "help" };
         CommandLine codeOwnersCLI = new CommandLine(new CodeOwnersCLI());
         int exitCode = codeOwnersCLI
                 .setColorScheme(codeOwnersCLI.getColorScheme())
@@ -51,6 +73,18 @@ class CodeOwnersCLITest {
     void mainTest() {
         String[] args = {};
         System.out.println(String.join(" ", args));
+        CommandLine codeOwnersCLI = new CommandLine(new CodeOwnersCLI());
+        int exitCode = codeOwnersCLI
+                .setColorScheme(codeOwnersCLI.getColorScheme())
+                .execute(args);
+        assertEquals(0, exitCode);
+    }
+
+    @Test
+    @DisplayName("Test codeowners-cli Main help")
+    void mainHelpTest() {
+        String[] args = {};
+        System.out.println(String.join("hellp", args));
         CommandLine codeOwnersCLI = new CommandLine(new CodeOwnersCLI());
         int exitCode = codeOwnersCLI
                 .setColorScheme(codeOwnersCLI.getColorScheme())

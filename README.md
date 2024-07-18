@@ -72,29 +72,30 @@ Process CODEOWNER files
   -V, --version   Print version information and exit.
 Commands:
   help    Display help information about the specified command.
-  list    Lists all files with the corresponding approvers
-  verify  Verifies the format of the CODEOWNERS file
+  list    Lists all files with the corresponding approvers.
+  verify  Verifies the format of the CODEOWNERS file.
 ```
 
 ```shell
 $ codeowners-cli list help
 
-Usage: codeowners-cli list [-fu] [-idl] [-ngi] [-cf=<codeownersFile>]
-                           [-gi=<gitignoreFile>] [-o=<owners>]... [<files>...]
-                           [COMMAND]
-Lists all files with the corresponding approvers
-      [<files>...]           Specifies the files to scan
-      -cf, --codeowners-file=<codeownersFile>
-                             Specify the path to the CODEOWNERS file.
-  -f, --fail-on-output       Whether to exit non-zero if there are any matches.
-      -gi, --gitignore-file=<gitignoreFile>
-                             Specify the path to the .gitignore file.
-      -idl, --ignore-dot-files
-                             Whether to ignore the dot files.
-      -ngi, --no-gitignore   Whether to ignore the .gitignore file.
-  -o, --owners=<owners>      Filters the results by owner
-  -u, --unowned-files        Whether to only show unowned files (can be
-                               combined with -o).
+Usage: codeowners-cli list [-fgu] [-c=<codeownersFile>] [-p=<basePath>]
+                           [-o=<owners>]... <files>... [COMMAND]
+Lists all files with the corresponding approvers.
+      <files>...          Specifies the files to scan.
+                            Default: ./
+  -c, --codeowners-file=<codeownersFile>
+                          Specify the path to the CODEOWNERS file.
+  -f, --fail-on-matches   Whether to exit non-zero if there are any matches.
+  -g, --git               Indicates whether git should be used to find .
+                            gitignore files. (git must be available on command
+                            line).
+  -o, --owners=<owners>   Filters the results by owner.
+  -p, --base-path=<basePath>
+                          The projects base path (useful for when .gitignore is
+                            located elsewhere).
+  -u, --unowned-files     Whether to only show unowned files (can be combined
+                            with -o).
 Commands:
   help  Display help information about the specified command.
 ```
@@ -127,10 +128,11 @@ $ codeowners-cli list
 ```shell
 codeowners-cli verify help
 
-Usage: codeowners-cli verify [-cf=<codeownersFile>] [COMMAND]
-Verifies the format of the CODEOWNERS file
-      -cf, --codeowners-file=<codeownersFile>
+Usage: codeowners-cli verify [-c=<codeownersFile>] [COMMAND]
+Verifies the format of the CODEOWNERS file.
+  -c, --codeowners-file=<codeownersFile>
          Specify the path to the CODEOWNERS file.
+           Default: ./CODEOWNERS
 Commands:
   help  Display help information about the specified command.
 ```
@@ -149,17 +151,17 @@ To use with Pre-commit, simply add the following to your `.pre-commit-config.yam
 
 ```yaml
 - repo: https://github.com/vincentjames501/codeowners-cli
-  rev: v0.0.3
+  rev: v0.0.4
   hooks:
     - id: codeowners-cli
-      args: [ "list", "--unowned-files", "--fail-on-output" ]
+      args: [ "list", "--unowned-files", "--fail-on-matches" ]
 ```
 
 ### To prevent committing just invalid CODEOWNERS
 
 ```yaml
 - repo: https://github.com/vincentjames501/codeowners-cli
-  rev: v0.0.3
+  rev: v0.0.4
   hooks:
     - id: codeowners-cli
       args: [ "verify" ]
