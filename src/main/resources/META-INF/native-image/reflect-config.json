@@ -1,6 +1,6 @@
 [
   {
-    "name" : "org.vincentjames501.codeowners.CodeOwnersCLI",
+    "name" : "io.github.vincentjames501.codeowners.CodeOwnersCLI",
     "allDeclaredConstructors" : true,
     "allPublicConstructors" : true,
     "allDeclaredMethods" : true,

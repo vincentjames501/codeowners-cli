@@ -14,7 +14,7 @@
  *  limitations under the License.
  */
 
-package org.vincentjames501.codeowners;
+package io.github.vincentjames501.codeowners;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

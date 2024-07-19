@@ -26,7 +26,7 @@ project:
     inceptionYear: "2024"
 
 distributions:
-  hello-maven:
+  codeowners-cli:
     type: NATIVE_IMAGE
     artifacts:
       - path: 'artifacts/{{distributionName}}-{{projectVersion}}-linux-x86_64.zip'

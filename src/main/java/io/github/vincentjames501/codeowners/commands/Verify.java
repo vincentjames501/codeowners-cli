@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.vincentjames501.codeowners.commands;
+package io.github.vincentjames501.codeowners.commands;
 
 import java.io.IOException;
 import java.nio.file.Files;

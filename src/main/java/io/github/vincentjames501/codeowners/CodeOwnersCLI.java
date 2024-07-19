@@ -13,13 +13,12 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.vincentjames501.codeowners;
+package io.github.vincentjames501.codeowners;
 
 import java.util.concurrent.Callable;
 
-import org.vincentjames501.codeowners.commands.ListCodeOwners;
-import org.vincentjames501.codeowners.commands.Verify;
-
+import io.github.vincentjames501.codeowners.commands.ListCodeOwners;
+import io.github.vincentjames501.codeowners.commands.Verify;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Help.Ansi.Style;

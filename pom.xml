@@ -22,11 +22,12 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>org.vincentjames501.codeowners</groupId>
+    <groupId>io.github.vincentjames501</groupId>
     <artifactId>codeowners-cli</artifactId>
     <version>0.0.6-SNAPSHOT</version>
 
-    <description>CodeOwners CLI utility</description>
+    <name>CodeOwners CLI utility</name>
+    <description>Command line tool for codeowners that helps identify the owners for files in a local repository or directory as well as identifying unowned code owners.</description>
     <inceptionYear>2024</inceptionYear>
     <url>https://github.com/vincentjames501/codeowners-cli</url>
 
@@ -47,7 +48,7 @@
 
     <properties>
         <!-- Build -->
-        <mainClass>org.vincentjames501.codeowners.CodeOwnersCLI</mainClass>
+        <mainClass>io.github.vincentjames501.codeowners.CodeOwnersCLI</mainClass>
         <executable-suffix/>
         <appName>codeowners-cli</appName>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -805,14 +806,18 @@
                                         <label>{{ projectVersionNumber }}-early-access</label>
                                     </snapshot>
                                 </project>
+                                <signing>
+                                    <active>ALWAYS</active>
+                                </signing>
                                 <deploy>
                                     <maven>
-                                        <github>
+                                        <mavenCentral>
                                             <app>
                                                 <active>ALWAYS</active>
+                                                <url>https://central.sonatype.com/api/v1/publisher</url>
                                                 <stagingRepositories>target/staging-deploy</stagingRepositories>
                                             </app>
-                                        </github>
+                                        </mavenCentral>
                                     </maven>
                                 </deploy>
                                 <packagers>
