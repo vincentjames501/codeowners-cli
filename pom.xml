@@ -805,16 +805,22 @@
                                         <label>{{ projectVersionNumber }}-early-access</label>
                                     </snapshot>
                                 </project>
+                                <deploy>
+                                    <maven>
+                                        <github>
+                                            <app>
+                                                <active>ALWAYS</active>
+                                                <stagingRepositories>target/staging-deploy</stagingRepositories>
+                                            </app>
+                                        </github>
+                                    </maven>
+                                </deploy>
                                 <packagers>
                                     <brew>
                                         <active>RELEASE</active>
                                         <continueOnError>true</continueOnError>
                                         <multiPlatform>true</multiPlatform>
                                     </brew>
-                                    <!--<sdkman>-->
-                                    <!--    <active>RELEASE</active>-->
-                                    <!--    <continueOnError>true</continueOnError>-->
-                                    <!--</sdkman>-->
                                 </packagers>
                                 <release>
                                     <github>
@@ -828,33 +834,57 @@
                                         <type>NATIVE_IMAGE</type>
                                         <artifacts>
                                             <artifact>
-                                                <path>{{artifactsDir}}/{{distributionName}}-{{projectVersion}}-linux-x86_64.tar.gz</path>
-                                                <transform>artifacts/{{distributionName}}-{{projectEffectiveVersion}}-linux-x86_64.tar.gz</transform>
+                                                <path>
+                                                    {{artifactsDir}}/{{distributionName}}-{{projectVersion}}-linux-x86_64.tar.gz
+                                                </path>
+                                                <transform>
+                                                    artifacts/{{distributionName}}-{{projectEffectiveVersion}}-linux-x86_64.tar.gz
+                                                </transform>
                                                 <platform>linux-x86_64</platform>
                                             </artifact>
                                             <artifact>
-                                                <path>{{artifactsDir}}/{{distributionName}}-{{projectVersion}}-linux-x86_64.zip</path>
-                                                <transform>artifacts/{{distributionName}}-{{projectEffectiveVersion}}-linux-x86_64.zip</transform>
+                                                <path>
+                                                    {{artifactsDir}}/{{distributionName}}-{{projectVersion}}-linux-x86_64.zip
+                                                </path>
+                                                <transform>
+                                                    artifacts/{{distributionName}}-{{projectEffectiveVersion}}-linux-x86_64.zip
+                                                </transform>
                                                 <platform>linux-x86_64</platform>
                                             </artifact>
                                             <artifact>
-                                                <path>{{artifactsDir}}/{{distributionName}}-{{projectVersion}}-windows-x86_64.zip</path>
-                                                <transform>artifacts/{{distributionName}}-{{projectEffectiveVersion}}-windows-x86_64.zip</transform>
+                                                <path>
+                                                    {{artifactsDir}}/{{distributionName}}-{{projectVersion}}-windows-x86_64.zip
+                                                </path>
+                                                <transform>
+                                                    artifacts/{{distributionName}}-{{projectEffectiveVersion}}-windows-x86_64.zip
+                                                </transform>
                                                 <platform>windows-x86_64</platform>
                                             </artifact>
                                             <artifact>
-                                                <path>{{artifactsDir}}/{{distributionName}}-{{projectVersion}}-windows-x86_64.tar.gz</path>
-                                                <transform>artifacts/{{distributionName}}-{{projectEffectiveVersion}}-windows-x86_64.tar.gz</transform>
+                                                <path>
+                                                    {{artifactsDir}}/{{distributionName}}-{{projectVersion}}-windows-x86_64.tar.gz
+                                                </path>
+                                                <transform>
+                                                    artifacts/{{distributionName}}-{{projectEffectiveVersion}}-windows-x86_64.tar.gz
+                                                </transform>
                                                 <platform>windows-x86_64</platform>
                                             </artifact>
                                             <artifact>
-                                                <path>{{artifactsDir}}/{{distributionName}}-{{projectVersion}}-osx-aarch_64.zip</path>
-                                                <transform>artifacts/{{distributionName}}-{{projectEffectiveVersion}}-osx-aarch_64.zip</transform>
+                                                <path>
+                                                    {{artifactsDir}}/{{distributionName}}-{{projectVersion}}-osx-aarch_64.zip
+                                                </path>
+                                                <transform>
+                                                    artifacts/{{distributionName}}-{{projectEffectiveVersion}}-osx-aarch_64.zip
+                                                </transform>
                                                 <platform>osx-aarch_64</platform>
                                             </artifact>
                                             <artifact>
-                                                <path>{{artifactsDir}}/{{distributionName}}-{{projectVersion}}-osx-aarch_64.tar.gz</path>
-                                                <transform>artifacts/{{distributionName}}-{{projectEffectiveVersion}}-osx-aarch_64.tar.gz</transform>
+                                                <path>
+                                                    {{artifactsDir}}/{{distributionName}}-{{projectVersion}}-osx-aarch_64.tar.gz
+                                                </path>
+                                                <transform>
+                                                    artifacts/{{distributionName}}-{{projectEffectiveVersion}}-osx-aarch_64.tar.gz
+                                                </transform>
                                                 <platform>osx-aarch_64</platform>
                                             </artifact>
                                         </artifacts>
