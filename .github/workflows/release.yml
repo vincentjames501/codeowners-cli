@@ -157,6 +157,9 @@ jobs:
           distribution: ${{ env.JAVA_DISTRO }}
           cache: maven
 
+      - name: 'Prepare Staging for JReleaser'
+        run: ./mvnw -Ppublication deploy -DaltDeploymentRepository=local::file:./target/staging-deploy -DskipTests
+
       - name: 'Release with JReleaser'
         env:
           JRELEASER_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
