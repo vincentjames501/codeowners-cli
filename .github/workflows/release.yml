@@ -158,7 +158,7 @@ jobs:
           cache: maven
 
       - name: 'Prepare Staging for JReleaser'
-        run: ./mvnw -Ppublication deploy -DaltDeploymentRepository=local::file:./target/staging-deploy -DskipTests
+        run: ./mvnw -Ppublication deploy -DskipTests
 
       - name: 'Release with JReleaser'
         env:
