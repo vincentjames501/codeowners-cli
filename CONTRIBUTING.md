@@ -26,7 +26,7 @@ This document outlines the basic steps required to work with and contribute to t
 The following software is required to work with the codeowners-cli codebase and build it locally:
 
 * [Git 2.2.1](https://git-scm.com) or later
-* JDK 21 or later, e.g. [OpenJDK](http://openjdk.java.net/projects/jdk/)
+* JDK 11 or later, e.g. [OpenJDK](http://openjdk.java.net/projects/jdk/)
 * [Apache Maven](https://maven.apache.org/index.html) 3.8.4 or later
 
 See the links above for installation instructions on your platform. You can verify the versions are installed and running:
