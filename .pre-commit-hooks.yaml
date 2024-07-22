@@ -19,4 +19,5 @@
   description: Runs codeowners-cli to list or validate code owners.
   entry: hooks/codeowners-cli-pre-commit
   language: script
+  exclude: ^\.git/.*$
   require_serial: true
