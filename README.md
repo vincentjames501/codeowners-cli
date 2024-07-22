@@ -77,7 +77,7 @@ Commands:
 ```shell
 $ codeowners-cli list help
 
-Usage: codeowners-cli list [-fgu] [-c=<codeownersFile>] [-p=<basePath>]
+Usage: codeowners-cli list [-fguv] [-c=<codeownersFile>] [-p=<basePath>]
                            [-o=<owners>]... <files>... [COMMAND]
 Lists all files with the corresponding approvers.
       <files>...          Specifies the files to scan.
@@ -94,6 +94,7 @@ Lists all files with the corresponding approvers.
                             located elsewhere).
   -u, --unowned-files     Whether to only show unowned files (can be combined
                             with -o).
+  -v, --verbose           Use verbose output
 Commands:
   help  Display help information about the specified command.
 ```
@@ -126,11 +127,12 @@ $ codeowners-cli list
 ```shell
 codeowners-cli verify help
 
-Usage: codeowners-cli verify [-c=<codeownersFile>] [COMMAND]
+Usage: codeowners-cli verify [-v] [-c=<codeownersFile>] [COMMAND]
 Verifies the format of the CODEOWNERS file.
   -c, --codeowners-file=<codeownersFile>
-         Specify the path to the CODEOWNERS file.
-           Default: ./CODEOWNERS
+                  Specify the path to the CODEOWNERS file.
+                    Default: ./CODEOWNERS
+  -v, --verbose   Use verbose output
 Commands:
   help  Display help information about the specified command.
 ```
@@ -149,7 +151,7 @@ To use with Pre-commit, simply add the following to your `.pre-commit-config.yam
 
 ```yaml
 - repo: https://github.com/vincentjames501/codeowners-cli
-  rev: v0.0.8
+  rev: v0.0.9
   hooks:
     - id: codeowners-cli
       args: [ "list", "--unowned-files", "--fail-on-matches" ]
@@ -159,7 +161,7 @@ To use with Pre-commit, simply add the following to your `.pre-commit-config.yam
 
 ```yaml
 - repo: https://github.com/vincentjames501/codeowners-cli
-  rev: v0.0.8
+  rev: v0.0.9
   hooks:
     - id: codeowners-cli
       args: [ "verify" ]
@@ -173,7 +175,7 @@ This package is also published to Maven for more advanced use cases:
 <dependency>
     <groupId>io.github.vincentjames501</groupId>
     <artifactId>codeowners-cli</artifactId>
-    <version>0.0.8</version>
+    <version>0.0.9</version>
 </dependency>
 ```
 

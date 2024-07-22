@@ -15,7 +15,6 @@
  */
 package io.github.vincentjames501.codeowners.commands;
 
-import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.concurrent.Callable;
@@ -38,21 +37,34 @@ public class Verify implements Callable<Integer> {
             "--codeowners-file" }, description = "Specify the path to the CODEOWNERS file.", defaultValue = "./CODEOWNERS", required = true, showDefaultValue = ALWAYS)
     Path codeownersFile;
 
+    @Option(names = { "-v",
+            "--verbose" }, description = "Use verbose output", defaultValue = "false")
+    boolean verbose;
+
     @Override
     public Integer call() {
-        if (!Files.exists(codeownersFile)) {
-            throw new IllegalArgumentException(String.format("CODEOWNERS not found: %s", codeownersFile));
-        }
         try {
+            if (!Files.exists(codeownersFile)) {
+                throw new IllegalArgumentException(String.format("CODEOWNERS not found: %s",
+                        codeownersFile.toString()));
+            }
             CodeOwners codeOwners = new CodeOwners(codeownersFile.toFile());
+            codeOwners.setVerbose(verbose);
             if (codeOwners.hasStructuralProblems()) {
-                throw new RuntimeException("CodeOwners has structural issues!");
+                throw new RuntimeException("CODEOWNERS file has structural issues!");
+            }
+            System.out.println("CODEOWNERS file is valid.");
+            return 0;
+        }
+        catch (Throwable t) {
+            if (verbose) {
+                throw new RuntimeException(t);
+            }
+            else {
+                final String message = t.getMessage();
+                System.out.println(message == null ? "Unknown failure. Run with --verbose for more details." : message);
+                return 1;
             }
         }
-        catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-        System.out.println("CODEOWNERS file is valid.");
-        return 0;
     }
 }

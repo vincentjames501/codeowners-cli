@@ -19,7 +19,6 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.*;
@@ -30,6 +29,9 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import nl.basjes.codeowners.CodeOwners;
 import nl.basjes.gitignore.GitIgnore;
 import nl.basjes.gitignore.GitIgnoreFileSet;
@@ -38,6 +40,7 @@ import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
 import picocli.CommandLine.Parameters;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static picocli.CommandLine.Help.Visibility.ALWAYS;
 
 /**
@@ -60,6 +63,10 @@ public class ListCodeOwners implements Callable<Integer> {
             "--git" }, description = "Indicates whether git should be used to find .gitignore files. (git must be available on command line).", defaultValue = "true")
     boolean useGit;
 
+    @Option(names = { "-v",
+            "--verbose" }, description = "Use verbose output", defaultValue = "false")
+    boolean verbose;
+
     @Option(names = { "-o", "--owners" }, description = "Filters the results by owner.")
     Set<String> owners;
 
@@ -69,9 +76,15 @@ public class ListCodeOwners implements Callable<Integer> {
     @Parameters(description = "Specifies the files to scan.", defaultValue = "./", arity = "1..*", showDefaultValue = ALWAYS)
     List<Path> files;
 
+    private static final Logger LOG = LoggerFactory.getLogger(GitIgnoreFileSet.class);
+
     private static final Set<String> IGNORED_DIR_NAMES = Set.of(".git", ".hg", ".svn");
 
     private static final Set<String> IGNORED_FILE_NAMES = Set.of(".gitignore");
+
+    private static String readFileToString(File file) throws IOException {
+        return Files.readString(file.toPath());
+    }
 
     /**
      * This isn't ideal but Files.walk/Files.find don't skip subtrees so if you have super large
@@ -118,35 +131,50 @@ public class ListCodeOwners implements Callable<Integer> {
 
     @Override
     public Integer call() {
-        if (basePath == null || !Files.exists(basePath) || !basePath.toFile().isDirectory()) {
-            throw new IllegalArgumentException("Base path could not found!");
-        }
-
-        codeownersFile = codeownersFile == null
-                ? Stream.of("CODEOWNERS",
-                        ".github/CODEOWNERS",
-                        ".gitlab/CODEOWNERS",
-                        "docs/CODEOWNERS")
-                        .map(p -> basePath.resolve(p))
-                        .filter(Files::exists)
-                        .findFirst()
-                        .orElse(null)
-                : codeownersFile;
-
-        if (codeownersFile == null || !Files.exists(codeownersFile)) {
-            throw new IllegalArgumentException("No CODEOWNERS file found!");
-        }
-
-        files.forEach(path -> {
-            if (!Files.exists(path)) {
-                throw new IllegalArgumentException(String.format("File or directory not found: %s", path));
-            }
-        });
-
-        // We shell out to git to list our gitignore files as naively walking the tree scanning for all .gitignore
-        // files may be super costly if projects have folders like node_modules/target/.m2/etc in them.
         try {
+            if (verbose) {
+                LOG.info(String.format("Validating supplied base path exists: %s", basePath == null ? "<not supplied>" : basePath.toString()));
+            }
+            if (basePath == null || !Files.exists(basePath) || !basePath.toFile().isDirectory()) {
+                throw new IllegalArgumentException("Base path could not found!");
+            }
+
+            if (verbose) {
+                if (codeownersFile == null) {
+                    LOG.info("Attempting to resolve a default location of CODEOWNERS file.");
+                }
+                else {
+                    LOG.info(String.format("Validating supplied CODEOWNERS file path exists: %s", codeownersFile));
+                }
+            }
+            codeownersFile = codeownersFile == null
+                    ? Stream.of("CODEOWNERS",
+                            ".github/CODEOWNERS",
+                            ".gitlab/CODEOWNERS",
+                            "docs/CODEOWNERS")
+                            .map(p -> basePath.resolve(p))
+                            .filter(Files::exists)
+                            .findFirst()
+                            .orElse(null)
+                    : codeownersFile;
+
+            if (codeownersFile == null || !Files.exists(codeownersFile)) {
+                throw new IllegalArgumentException("No CODEOWNERS file found!");
+            }
+
+            files.forEach(path -> {
+                if (verbose) {
+                    LOG.info(String.format("Validating supplied path %s exists", path.toString()));
+                }
+                if (!Files.exists(path)) {
+                    throw new IllegalArgumentException(String.format("File or directory not found: %s", path));
+                }
+            });
+
+            // We shell out to git to list our gitignore files as naively walking the tree scanning for all .gitignore
+            // files may be super costly if projects have folders like node_modules/target/.m2/etc in them.
             final GitIgnoreFileSet ignoredFileSet = new GitIgnoreFileSet(new File("./"), false)
+                    .setVerbose(verbose)
                     .assumeQueriesAreProjectRelative();
             if (useGit) {
                 final Process listGitIgnoreFilesProcess = new ProcessBuilder("git", "ls-files", "*.gitignore")
@@ -154,14 +182,18 @@ public class ListCodeOwners implements Callable<Integer> {
                         .start();
                 listGitIgnoreFilesProcess.waitFor(1, TimeUnit.MINUTES);
                 final Pattern gitIgnorePattern = Pattern.compile("^(.*)\\.gitignore$");
-                new BufferedReader(new InputStreamReader(listGitIgnoreFilesProcess.getInputStream(), StandardCharsets.UTF_8))
+                new BufferedReader(new InputStreamReader(listGitIgnoreFilesProcess.getInputStream(), UTF_8))
                         .lines()
                         .filter(s -> !s.isBlank())
                         .forEach(s -> {
                             try {
                                 final Matcher matcher = gitIgnorePattern.matcher(s);
-                                matcher.matches();
-                                ignoredFileSet.add(new GitIgnore(matcher.group(1), basePath.resolve(Path.of(s)).toFile()));
+                                if (matcher.matches()) {
+                                    ignoredFileSet.add(new GitIgnore(matcher.group(1), readFileToString(basePath.resolve(Path.of(s)).toFile()), verbose));
+                                }
+                                else if (verbose) {
+                                    LOG.info(String.format("Failed to match gitignore pattern: %s"));
+                                }
                             }
                             catch (IOException e) {
                                 throw new RuntimeException(e);
@@ -170,6 +202,7 @@ public class ListCodeOwners implements Callable<Integer> {
             }
 
             final CodeOwners codeOwners = new CodeOwners(codeownersFile.toFile());
+            codeOwners.setVerbose(verbose);
             if (codeOwners.hasStructuralProblems()) {
                 throw new RuntimeException("CodeOwners has structural issues!");
             }
@@ -206,7 +239,7 @@ public class ListCodeOwners implements Callable<Integer> {
                     .map(entry -> Map.entry(
                             entry.getKey().toString().replaceFirst(baseReplacementPattern, ""),
                             entry.getValue().isEmpty() ? "(Unowned)" : String.join(", ", entry.getValue())))
-                    .toList();
+                    .collect(Collectors.toList());
 
             if (matchEntries.isEmpty()) {
                 System.out.println("No matching owners");
@@ -231,8 +264,15 @@ public class ListCodeOwners implements Callable<Integer> {
                 return failOnMatches ? 1 : 0;
             }
         }
-        catch (IOException | InterruptedException e) {
-            throw new RuntimeException(e);
+        catch (Throwable t) {
+            if (verbose) {
+                throw new RuntimeException(t);
+            }
+            else {
+                final String message = t.getMessage();
+                System.out.println(message == null ? "Unknown failure. Run with --verbose for more details." : message);
+                return 1;
+            }
         }
     }
 }
