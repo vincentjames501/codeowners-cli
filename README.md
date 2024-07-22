@@ -45,8 +45,6 @@ Made with [contrib.rocks](https://contrib.rocks).
 
 Once you have built and released the application, you can use the following commands to deploy the application to your Mac, Linux or Windows machine.
 
-
-
 ```shell
 brew tap vincentjames501/tap
 brew install codeowners-cli
@@ -151,7 +149,7 @@ To use with Pre-commit, simply add the following to your `.pre-commit-config.yam
 
 ```yaml
 - repo: https://github.com/vincentjames501/codeowners-cli
-  rev: v0.0.4
+  rev: v0.0.8
   hooks:
     - id: codeowners-cli
       args: [ "list", "--unowned-files", "--fail-on-matches" ]
@@ -161,10 +159,22 @@ To use with Pre-commit, simply add the following to your `.pre-commit-config.yam
 
 ```yaml
 - repo: https://github.com/vincentjames501/codeowners-cli
-  rev: v0.0.4
+  rev: v0.0.8
   hooks:
     - id: codeowners-cli
       args: [ "verify" ]
+```
+
+## As Maven Package
+
+This package is also published to Maven for more advanced use cases:
+
+```xml
+<dependency>
+    <groupId>io.github.vincentjames501</groupId>
+    <artifactId>codeowners-cli</artifactId>
+    <version>0.0.8</version>
+</dependency>
 ```
 
 ## Building

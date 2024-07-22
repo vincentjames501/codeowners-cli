@@ -30,7 +30,7 @@ import picocli.CommandLine.HelpCommand;
  * @version 0.0.1
  * @since 2024-July-15
  */
-@Command(name = "codeowners-cli", mixinStandardHelpOptions = true, version = "codeowners-cli 0.0.1", description = "Process CODEOWNER files", subcommands = {
+@Command(name = "codeowners-cli", mixinStandardHelpOptions = true, version = "codeowners-cli 0.0.9", description = "Process CODEOWNER files", subcommands = {
         HelpCommand.class,
         ListCodeOwners.class,
         Verify.class
