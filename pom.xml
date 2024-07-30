@@ -77,6 +77,8 @@
 
         <!-- Dependencies -->
         <plugin.site.version>4.0.0-M15</plugin.site.version>
+
+        <skipShaded>false</skipShaded>
     </properties>
 
     <!-- Override dependencies -->
@@ -391,6 +393,7 @@
                     </execution>
                 </executions>
                 <configuration>
+                    <skip>${skipShaded}</skip>
                     <finalName>${project.artifactId}-${project.version}</finalName>
                 </configuration>
             </plugin>

@@ -120,7 +120,7 @@ jobs:
         run: ./mvnw -ntp -B --file pom.xml -Pnative package -DskipTests
 
       - name: 'Create distribution'
-        run: ./mvnw -ntp -B --file pom.xml -Pdist package -DskipTests
+        run: ./mvnw -ntp -B --file pom.xml -Pdist package -DskipTests -DskipShaded
 
       - name: 'Upload build artifact'
         uses: actions/upload-artifact@v4
@@ -158,7 +158,7 @@ jobs:
           cache: maven
 
       - name: 'Prepare Staging for JReleaser'
-        run: ./mvnw -Ppublication deploy -DskipTests
+        run: for filename in target/original-*.jar; do rm "${filename//original-/}" && mv "$filename" "${filename//original-/}"; done && ./mvnw -Ppublication deploy -DskipTests -DskipShaded
 
       - name: 'Release with JReleaser'
         env:
