@@ -24,7 +24,7 @@
 
     <groupId>io.github.vincentjames501</groupId>
     <artifactId>codeowners-cli</artifactId>
-    <version>0.0.11</version>
+    <version>0.0.12</version>
 
     <name>CodeOwners CLI utility</name>
     <description>Command line tool for codeowners that helps identify the owners for files in a local repository or directory as well as identifying unowned code owners.</description>
