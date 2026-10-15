@@ -13,19 +13,14 @@ jobs:
       - run: echo "🔎 Checking code quality of repository ${{ github.repository }}."
 
       - name: 'Checkout'
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: 'Setup Java 21'
-        uses: actions/setup-java@v1
+        uses: actions/setup-java@v4
         with:
           java-version: 21
-
-      - name: Cache Maven packages
-        uses: actions/cache@v1
-        with:
-          path: ~/.m2
-          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
-          restore-keys: ${{ runner.os }}-m2
+          distribution: temurin
+          cache: maven
 
       - name: Run Coverage
         run: |
@@ -33,7 +28,7 @@ jobs:
 
       - name: Add coverage to PR
         id: jacoco
-        uses: madrapps/jacoco-report@v1.6.1
+        uses: madrapps/jacoco-report@v1.8.0
         with:
           paths: ${{github.workspace}}/target/site/jacoco-ut/jacoco.xml
           token: ${{ secrets.GITHUB_TOKEN }}
