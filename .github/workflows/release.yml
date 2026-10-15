@@ -21,7 +21,6 @@ on:
 env:
   JAVA_VERSION: '21'
   JAVA_DISTRO: 'temurin'
-  GRAAL_VERSION: '22.3.0'
 
 jobs:
   version:
